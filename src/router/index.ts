@@ -27,7 +27,7 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach((to, _from) => {
   const token = getAuthToken()
   
   const requiresAuth = to.meta.requiresAuth

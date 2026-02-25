@@ -38,7 +38,7 @@ requestNotes()
           </h1>
 
           <div>
-            <input id="date" v-model="today" type="date" @change="(e) => requestNotes()">
+            <input id="date" v-model="today" type="date" @change="() => requestNotes()">
           </div>
         </div>
 
