@@ -110,16 +110,7 @@ function toggleComplete(note: Note, e: Event) {
                 </span>
               </div>
             </div>
-            <audio
-              v-if="isAudioNote(note.type)"
-              :src="note.content"
-              controls
-              preload="metadata"
-              class="mt-0.5 w-full max-w-full rounded-lg"
-              @click.stop
-            />
             <p
-              v-else
               class="leading-relaxed text-zinc-900 line-clamp-3 whitespace-pre-wrap dark:text-zinc-100"
             >
               {{ note.content }}
