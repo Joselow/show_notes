@@ -64,6 +64,22 @@ export function useNotes() {
     }
   }
 
+  const deleteNote = async (id: string): Promise<boolean> => {
+    error.value = null
+    loading.value = true
+    try {
+      await api.delete(`/notes/${id}`)
+      return true
+    } catch (err: unknown) {
+      const ax = err as { response?: { data?: { message?: string } } }
+      error.value = ax.response?.data?.message || 'Error al eliminar nota'
+      console.error(err)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     notes,
     loading,
@@ -71,5 +87,6 @@ export function useNotes() {
     fetchNotes,
     createNote,
     updateNote,
+    deleteNote
   }
 }

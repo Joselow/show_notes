@@ -7,7 +7,7 @@ import NoteModal from '../components/Notes/NoteModal.vue'
 import Loader from '../components/Loader.vue'
 
 import { useAuth } from '../composables/useAuth'
-import { useNotes, type NotesRange } from '../components/useNotes'
+import { useNotes, type NotesRange } from '../composables/useNotes'
 import type { CreateNoteBody, Note, NoteCategory } from '../interfaces'
 
 const { logout } = useAuth()
@@ -95,6 +95,11 @@ async function patchCompleted(id: string, value: boolean) {
   } catch {
     /* useNotes.error */
   }
+}
+
+async function onDeleteNote(id: string) {
+  notes.value = notes.value.filter((note) => note.id !== id)
+  selectedNote.value = null
 }
 </script>
 
@@ -192,6 +197,7 @@ async function patchCompleted(id: string, value: boolean) {
       @update:open="modalOpen = $event"
       @create="onCreate"
       @save-content="onSaveContent"
+      @delete-note="onDeleteNote"
     />
   </div>
 </template>

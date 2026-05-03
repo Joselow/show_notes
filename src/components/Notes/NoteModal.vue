@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
+
+import Loader from '../../components/Loader.vue'
+
+import { useNotes } from '../../composables/useNotes'
+
 import type { CreateNoteBody, Note, NoteCategory, NoteTypeName } from '../../interfaces'
+
 import {
   categoryLabel,
   isTaskNote,
@@ -9,6 +15,7 @@ import {
   typeLabel,
 } from '../../utils/noteHelpers'
 
+const { deleteNote, loading } = useNotes()
 const props = defineProps<{
   open: boolean
   mode: 'create' | 'edit'
@@ -19,6 +26,7 @@ const emit = defineEmits<{
   'update:open': [value: boolean]
   create: [payload: CreateNoteBody]
   'save-content': [id: string, content: string, category: NoteCategory, isCompleted?: boolean]
+  'delete-note': [id: string]
 }>()
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
@@ -111,9 +119,23 @@ const showTaskSwitchCreate = () =>
 
 const showTaskSwitchEdit = () =>
   props.mode === 'edit' && props.note && isTaskNote(editCategory.value)
+
+const handleDeleteNote = async () => {
+  if (!props.note || !props.note.id) return
+
+  const confirmed = confirm('¿Estás seguro de querer eliminar esta nota?')
+  if (!confirmed) return
+
+  const success = await deleteNote(props.note.id)
+  if (success) {
+    close()
+    emit('delete-note', props.note.id)
+  }
+}
 </script>
 
 <template>
+  <Loader v-if="loading" />
   <Teleport to="body">
     <div
       v-show="open"
@@ -270,8 +292,19 @@ const showTaskSwitchEdit = () =>
         </div>
 
         <footer
-          class="flex shrink-0 justify-end gap-2 border-t border-zinc-100 bg-zinc-50/50 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] dark:border-zinc-800 dark:bg-zinc-950/50 sm:pb-3"
+          class="flex shrink-0 justify-between gap-2 border-t border-zinc-100 bg-zinc-50/50 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] dark:border-zinc-800 dark:bg-zinc-950/50 sm:pb-3"
         >
+        <div>
+          <button 
+            v-if="note && note.id"
+            type="button"
+            class="bg-red-500/60 text-white rounded-lg px-3 py-2 text-sm hover:bg-red-500/80"
+            @click="handleDeleteNote"
+          >
+            Eliminar
+          </button>
+        </div>
+        <div class="flex shrink-0 justify-end gap-2 ">
           <button
             type="button"
             class="rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -296,6 +329,7 @@ const showTaskSwitchEdit = () =>
           >
             Guardar
           </button>
+        </div>
         </footer>
       </div>
     </div>
