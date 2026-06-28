@@ -1,6 +1,12 @@
 import type { NoteCategory } from '../interfaces'
 
-const CATEGORY_OPTIONS: NoteCategory[] = ['task', 'apunte', 'aprendizaje']
+const CATEGORY_OPTIONS: NoteCategory[] = [
+  'task',
+  'frase',
+  'por_estudiar',
+  'aprendizaje',
+  'apunte',
+]
 
 export const NOTE_CATEGORIES: NoteCategory[] = CATEGORY_OPTIONS
 
@@ -14,9 +20,11 @@ export function isTaskNote(category: string | undefined): boolean {
 }
 
 const LABELS: Record<NoteCategory, string> = {
-  task: 'Task',
-  apunte: 'Apunte',
+  task: 'Tarea',
+  frase: 'Frase',
+  por_estudiar: 'Por Estudiar',
   aprendizaje: 'Aprendizaje',
+  apunte: 'Apunte',
 }
 
 export function categoryLabel(category: string | undefined): string {

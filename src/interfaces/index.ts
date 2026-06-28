@@ -8,7 +8,12 @@ export interface User {
 
 export type NoteTypeName = 'text' | 'audio'
 
-export type NoteCategory = 'task' | 'apunte' | 'aprendizaje'
+export type NoteCategory =
+  | 'task'
+  | 'frase'
+  | 'por_estudiar'
+  | 'aprendizaje'
+  | 'apunte'
 
 export interface Note {
   id: string

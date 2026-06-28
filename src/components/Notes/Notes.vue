@@ -29,6 +29,9 @@ const formatDate = (dateString: string) => {
 
 const CATEGORY_BADGE: Record<string, string> = {
   task: 'bg-amber-100 text-amber-900 dark:bg-amber-900/35 dark:text-amber-100',
+  frase: 'bg-sky-100 text-sky-900 dark:bg-sky-900/35 dark:text-sky-100',
+  por_estudiar:
+    'bg-emerald-100 text-emerald-900 dark:bg-emerald-900/35 dark:text-emerald-100',
   apunte: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200',
   aprendizaje:
     'bg-violet-100 text-violet-900 dark:bg-violet-900/35 dark:text-violet-100',

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
 
-import Loader from '../../components/Loader.vue'
-
 import { useNotes } from '../../composables/useNotes'
 
 import type { CreateNoteBody, Note, NoteCategory, NoteTypeName } from '../../interfaces'
@@ -15,7 +13,8 @@ import {
   typeLabel,
 } from '../../utils/noteHelpers'
 
-const { deleteNote, loading } = useNotes()
+const { deleteNote } = useNotes()
+const deleting = ref(false)
 const props = defineProps<{
   open: boolean
   mode: 'create' | 'edit'
@@ -26,7 +25,7 @@ const emit = defineEmits<{
   'update:open': [value: boolean]
   create: [payload: CreateNoteBody]
   'save-content': [id: string, content: string, category: NoteCategory, isCompleted?: boolean]
-  'delete-note': [id: string]
+  'delete-note': []
 }>()
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
@@ -67,7 +66,7 @@ watch(
     if (mode === 'create') {
       resetCreateDrafts()
     }
-    nextTick(() => textareaRef.value?.focus())
+    nextTick(() => textareaRef.value?.focus({ preventScroll: true }))
   },
 )
 
@@ -126,16 +125,20 @@ const handleDeleteNote = async () => {
   const confirmed = confirm('¿Estás seguro de querer eliminar esta nota?')
   if (!confirmed) return
 
-  const success = await deleteNote(props.note.id)
-  if (success) {
-    close()
-    emit('delete-note', props.note.id)
+  deleting.value = true
+  try {
+    const success = await deleteNote(props.note.id)
+    if (success) {
+      close()
+      emit('delete-note')
+    }
+  } finally {
+    deleting.value = false
   }
 }
 </script>
 
 <template>
-  <Loader v-if="loading" />
   <Teleport to="body">
     <div
       v-show="open"
@@ -198,7 +201,6 @@ const handleDeleteNote = async () => {
                   class="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-2 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
                 >
                   <option value="text">Texto</option>
-                  <option value="audio">Audio</option>
                 </select>
               </label>
               <label class="block text-xs text-zinc-500 dark:text-zinc-400">
@@ -298,7 +300,8 @@ const handleDeleteNote = async () => {
           <button 
             v-if="note && note.id"
             type="button"
-            class="bg-red-500/60 text-white rounded-lg px-3 py-2 text-sm hover:bg-red-500/80"
+            class="bg-red-500/60 text-white rounded-lg px-3 py-2 text-sm hover:bg-red-500/80 disabled:opacity-50"
+            :disabled="deleting"
             @click="handleDeleteNote"
           >
             Eliminar
